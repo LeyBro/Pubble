@@ -13,7 +13,7 @@ from werkzeug.utils import secure_filename
 MAINTENANCE_MODE = False
 
 app = Flask(__name__)
-app.secret_key = os.environ.get("")
+app.secret_key = os.environ.get("SECRET_KEY")
 
 DATABASE = "database.db"
 UPLOAD_FOLDER = os.path.join("static", "uploads")
