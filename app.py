@@ -1201,8 +1201,11 @@ def register():
                     VALUES (?, ?, ?, 0, ?)
                 """, (username, email, hashed_password, verification_code))
                 conn.commit()
-
-            sent = send_verification_email(email, verification_code)
+            try:
+                sent = send_verification_email(email, verification_code)
+            except Exception as e:
+                print("EMAIL ERROR:", e)
+                sent = False
 
             if sent:
                 flash("Аккаунт создан. Код подтверждения отправлен на email.")
