@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Пользователи</h1>
+</div>
+
+<form class="form" method="GET" action="/admin/users">
+    <input type="text" name="q" placeholder="Поиск по username, email или id" value="{{ query }}">
+    <button type="submit">Найти</button>
+</form>
+
+<div class="admin-table-card">
+    {% if users %}
+        <div class="admin-user-list">
+            {% for user in users %}
+                <a class="admin-user-row" href="/admin/user/{{ user.id }}">
+                    <div class="admin-user-main">
+                        <strong>#{{ user.id }} · @{{ user.username }}</strong>
+                        <div class="admin-user-meta">{{ user.email }}</div>
+                    </div>
+
+                    <div class="admin-user-meta">
+                        {% if user.is_admin == 1 %}Админ · {% endif %}
+                        {% if user.is_banned == 1 %}Забанен · {% endif %}
+                        {% if user.email_verified == 1 %}Email подтверждён{% else %}Email не подтверждён{% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Ничего не найдено</div>
+    {% endif %}
+</div>
+{% endblock %}

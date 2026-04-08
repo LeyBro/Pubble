@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Диалог{% endblock %}
+
+{% block content %}
+<div class="chat-page">
+    <div class="chat-topbar">
+        <a href="/profile/{{ other_user.username }}" class="chat-user-link">
+            <img
+                src="{{ url_for('static', filename=(other_user.avatar_url or 'default-avatar.jpg')) }}"
+                alt="avatar"
+                class="chat-user-avatar"
+            >
+            <div class="chat-user-meta">
+                <div class="chat-user-name">@{{ other_user.username }}</div>
+                <div class="chat-user-status {% if other_user_status == 'в сети' %}chat-user-status-online{% endif %}">
+                    {{ other_user_status }}
+                </div>
+            </div>
+        </a>
+        <a href="/messages" class="chat-floating-back">Назад</a>
+    </div>
+
+    <div class="chat-box compact-chat-box" id="chatBox">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message-row {% if message.sender_id == session.get('user_id') %}message-row-me{% else %}message-row-other{% endif %}">
+                    <div class="message-bubble {% if message.sender_id == session.get('user_id') %}my-bubble{% else %}their-bubble{% endif %}">
+                        <div class="message-meta">
+                            <strong>@{{ message.username }}</strong>
+                            <span data-utc-time="{{ message.created_at }}">{{ message.created_at }}</span>
+                        </div>
+
+                        <div class="message-text">{{ message.content }}</div>
+
+                        {% if message.sender_id == session.get('user_id') %}
+                            <div class="message-actions">
+                                <a href="/edit-message/{{ message.id }}" class="message-icon-btn">✏️</a>
+                                <form method="POST" action="/delete-message/{{ message.id }}">
+                                    <button type="submit" class="message-icon-btn">🗑️</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">Сообщений пока нет</div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="chat-compose-wrap">
+    <form method="POST" class="chat-compose">
+        <textarea
+            name="content"
+            rows="1"
+            maxlength="2000"
+            placeholder="Напиши сообщение..."
+            required
+        ></textarea>
+        <button type="submit" class="chat-send-btn" aria-label="Отправить">↑</button>
+    </form>
+</div>
+
+<script>
+window.addEventListener("load", function () {
+    const chatBox = document.getElementById("chatBox");
+    if (chatBox) {
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+});
+</script>
+{% endblock %}

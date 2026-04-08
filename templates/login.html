@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-head">
+            <h1>Вход в Pubble</h1>
+            <p>Продолжай общение, делись постами и следи за друзьями.</p>
+        </div>
+
+<form class="form auth-form" method="POST">
+    <input type="text" name="username" placeholder="Логин" required>
+
+    <div class="password-field">
+        <input type="password" name="password" id="loginPassword" placeholder="Пароль" required>
+        <button
+            type="button"
+            class="password-toggle"
+            onclick="togglePassword('loginPassword', this)"
+            data-eye="{{ url_for('static', filename='icons/free-icon-eye.png') }}"
+            data-hide="{{ url_for('static', filename='icons/free-icon-hide.png') }}"
+        >
+            <img src="{{ url_for('static', filename='icons/free-icon-eye.png') }}" alt="Показать пароль">
+        </button>
+    </div>
+
+    <button type="submit">Войти</button>
+</form>
+
+        <div class="auth-links-block">
+            <a class="comment-link" href="/forgot-password">Забыл пароль?</a>
+            <a class="comment-link" href="/register">Нет аккаунта? Зарегистрироваться</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% set current_theme = session.get('theme', 'light') %}
+{% set is_auth_page = request.path in ['/login', '/register', '/forgot-password'] %}
+{% set is_chat_page = request.path.startswith('/messages/') %}
+{% set is_logged_in = session.get('user_id') %}
+
+<!DOCTYPE html>
+<html lang="ru" data-theme="{{ current_theme }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Pubble{% endblock %}</title>
+
+    <script>
+        (function () {
+            const savedTheme = localStorage.getItem("pubble_theme");
+            const theme = savedTheme || "{{ current_theme }}";
+            document.documentElement.setAttribute("data-theme", theme);
+        })();
+    </script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="{% if is_chat_page %}chat-body{% endif %}">
+
+    {% if is_logged_in and not is_auth_page and not is_chat_page %}
+        <div class="desktop-shell">
+            <aside class="desktop-sidebar">
+                <div class="desktop-sidebar-card">
+                    <a class="desktop-logo" href="/">pubble</a>
+
+                    <nav class="desktop-nav">
+                        <a href="/" class="desktop-nav-link {% if request.path == '/' and request.args.get('tab') != 'popular' %}active{% endif %}">Лента</a>
+
+                        <a href="/messages" class="desktop-nav-link {% if request.path.startswith('/messages') %}active{% endif %}">
+                            <span>Сообщения</span>
+                            {% if unread_messages > 0 %}
+                                <span class="desktop-nav-badge">{{ unread_messages }}</span>
+                            {% endif %}
+                        </a>
+
+                        <a href="/friends" class="desktop-nav-link {% if request.path == '/friends' %}active{% endif %}">
+                            <span>Друзья</span>
+                            {% if friends_notifications > 0 %}
+                                <span class="desktop-nav-badge">{{ friends_notifications }}</span>
+                            {% endif %}
+                        </a>
+
+                        <a href="/liked" class="desktop-nav-link {% if request.path == '/liked' %}active{% endif %}">Понравившиеся</a>
+                        <a href="/privacy" class="desktop-nav-link {% if request.path == '/privacy' %}active{% endif %}">Приватность</a>
+                        <a href="/settings" class="desktop-nav-link {% if request.path == '/settings' %}active{% endif %}">Настройки</a>
+                        {% if is_admin %}
+                            <a href="/admin" class="desktop-nav-link {% if request.path.startswith('/admin') %}active{% endif %}">
+                                Админка
+                            </a>
+                        {% endif %}
+                        <a href="/logout" class="desktop-nav-link">Выход</a>
+                    </nav>
+                </div>
+            </aside>
+
+            <div class="desktop-main-column">
+                <header class="desktop-topbar">
+                    <form class="desktop-search" method="GET" action="/search">
+                        <input
+                            type="text"
+                            name="q"
+                            placeholder="Поиск по pubble"
+                            value="{{ request.args.get('q', '') }}"
+                        >
+                    </form>
+                </header>
+
+                <main class="desktop-content">
+    {% else %}
+                <main class="page-wrap {% if is_chat_page %}chat-page-wrap{% elif is_auth_page %}auth-clean-wrap{% else %}guest-clean-wrap{% endif %}">
+    {% endif %}
+
+                    {% with messages = get_flashed_messages() %}
+                        {% if messages %}
+                            <div class="toast-container" id="toastContainer">
+                                {% for message in messages %}
+                                    <div class="toast-message">{{ message }}</div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    {% endwith %}
+
+                    {% block content %}{% endblock %}
+                </main>
+
+    {% if is_logged_in and not is_auth_page and not is_chat_page %}
+
+
+            </div>
+
+            <aside class="desktop-rightbar">
+                <div class="desktop-side-card profile-side-card">
+                    <h3 class="desktop-side-title">Профиль</h3>
+
+                    <a class="profile-side-user" href="/profile/{{ session.get('username') }}">
+                        <img
+                            src="{{ url_for('static', filename=(session.get('avatar_url') or 'default-avatar.jpg')) }}"
+                            alt="avatar"
+                            class="profile-side-avatar"
+                        >
+                        <div class="profile-side-meta">
+                            <strong>{{ session.get('username') }}</strong>
+                            <span>{{ session.get('full_name') or 'Пользователь' }}</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="desktop-side-card notifications-side-card">
+                    <h3 class="desktop-side-title">Уведомления</h3>
+
+                    <div class="notify-accordion">
+                        <button class="notify-accordion-toggle" type="button" data-accordion-target="likesBox">
+                            <span>Лайки</span>
+                            {% if activity_notifications > 0 %}
+                                <span class="notify-count">{{ activity_notifications }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notify-accordion-box" id="likesBox"></div>
+                    </div>
+
+                    <div class="notify-accordion">
+                        <button class="notify-accordion-toggle" type="button" data-accordion-target="friendsBox">
+                            <span>Заявки в друзья</span>
+                            {% if friends_notifications > 0 %}
+                                <span class="notify-count">{{ friends_notifications }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notify-accordion-box" id="friendsBox"></div>
+                    </div>
+
+                    <div class="notify-accordion">
+                        <button class="notify-accordion-toggle" type="button" data-accordion-target="messagesBox">
+                            <span>Сообщения</span>
+                            {% if unread_messages > 0 %}
+                                <span class="notify-count">{{ unread_messages }}</span>
+                            {% endif %}
+                        </button>
+                        <div class="notify-accordion-box" id="messagesBox"></div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    {% endif %}
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const container = document.getElementById("toastContainer");
+        if (container) {
+            const toasts = container.querySelectorAll(".toast-message");
+
+            toasts.forEach((toast, index) => {
+                setTimeout(() => {
+                    toast.classList.add("toast-show");
+                }, 100 + index * 120);
+
+                setTimeout(() => {
+                    toast.classList.remove("toast-show");
+                    toast.classList.add("toast-hide");
+                }, 3200 + index * 120);
+
+                setTimeout(() => {
+                    toast.remove();
+                    if (!container.querySelector(".toast-message")) {
+                        container.remove();
+                    }
+                }, 3900 + index * 120);
+            });
+        }
+
+        const savedTheme = localStorage.getItem("pubble_theme") || document.documentElement.getAttribute("data-theme") || "light";
+        document.documentElement.setAttribute("data-theme", savedTheme);
+
+        document.querySelectorAll("[data-utc-time]").forEach((el) => {
+            const raw = el.getAttribute("data-utc-time");
+            if (!raw) return;
+
+            const normalized = raw.replace("", "T");
+            const date = new Date(normalized + "Z");
+
+            if (!isNaN(date.getTime())) {
+                el.textContent = date.toLocaleString("ru-RU", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit"
+                });
+            }
+        });
+
+        document.querySelectorAll(".notify-accordion-toggle").forEach((btn) => {
+            btn.addEventListener("click", function () {
+                const targetId = btn.getAttribute("data-accordion-target");
+                const target = document.getElementById(targetId);
+                if (!target) return;
+
+                btn.classList.toggle("active");
+                target.classList.toggle("open");
+            });
+        });
+    });
+    </script>
+
+    <script>
+    function togglePassword(inputId, button) {
+        const input = document.getElementById(inputId);
+        if (!input) return;
+
+        const img = button.querySelector("img");
+        const eyeSrc = button.dataset.eye;
+        const hideSrc = button.dataset.hide;
+
+        if (input.type === "password") {
+            input.type = "text";
+            if (img && hideSrc) img.src = hideSrc;
+        } else {
+            input.type = "password";
+            if (img && eyeSrc) img.src = eyeSrc;
+        }
+    }
+    </script>
+    
+</body>
+</html> 

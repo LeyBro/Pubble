@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}Админка{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Админ-панель</h1>
+</div>
+
+<div class="admin-stats-grid">
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Пользователей</div>
+        <div class="admin-stat-value">{{ stats.users_total }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Подтвердили email</div>
+        <div class="admin-stat-value">{{ stats.users_verified }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Новых за 24ч</div>
+        <div class="admin-stat-value">{{ stats.users_new_24h }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Онлайн</div>
+        <div class="admin-stat-value">{{ stats.users_online }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Забанено</div>
+        <div class="admin-stat-value">{{ stats.users_banned }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Постов</div>
+        <div class="admin-stat-value">{{ stats.posts_total }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Комментариев</div>
+        <div class="admin-stat-value">{{ stats.comments_total }}</div>
+    </div>
+
+    <div class="admin-stat-card">
+        <div class="admin-stat-label">Сообщений</div>
+        <div class="admin-stat-value">{{ stats.messages_total }}</div>
+    </div>
+</div>
+
+<div class="admin-actions-row">
+    <a href="/admin/users" class="main-button">Открыть пользователей</a>
+    <a href="/admin/conversations" class="main-button">Личные сообщения</a>
+</div>
+
+<div class="admin-table-card">
+    <div class="page-top" style="margin-bottom: 14px;">
+        <h2>Последние регистрации</h2>
+    </div>
+
+    <div class="admin-user-list">
+        {% for user in recent_users %}
+            <a class="admin-user-row" href="/admin/user/{{ user.id }}">
+                <div>
+                    <strong>@{{ user.username }}</strong>
+                    <div class="admin-user-meta">{{ user.email }}</div>
+                </div>
+
+                <div class="admin-user-meta">
+                    {% if user.is_admin == 1 %}Админ · {% endif %}
+                    {% if user.is_banned == 1 %}Забанен · {% endif %}
+                    <span data-utc-time="{{ user.created_at }}">{{ user.created_at }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

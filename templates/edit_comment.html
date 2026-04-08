@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать комментарий{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Редактировать комментарий</h1>
+    <a class="main-button" href="/post/{{ comment.post_id }}">Назад к посту</a>
+</div>
+
+<form class="form" method="POST">
+    <textarea name="content" rows="5" required>{{ comment.content }}</textarea>
+    <button type="submit">Сохранить изменения</button>
+</form>
+{% endblock %}

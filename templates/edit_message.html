@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать сообщение{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Редактировать сообщение</h1>
+    <a class="main-button" href="/messages/{{ message.conversation_id }}">Назад в диалог</a>
+</div>
+
+<form class="form" method="POST">
+    <textarea name="content" rows="5" required>{{ message.content }}</textarea>
+    <button type="submit">Сохранить изменения</button>
+</form>
+{% endblock %}

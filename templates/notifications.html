@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Уведомления{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Уведомления</h1>
+</div>
+
+<div class="notifications-list">
+    {% if notifications %}
+        {% for notification in notifications %}
+            <a class="notification-card" href="{{ notification.link or '/notifications' }}">
+                <div class="notification-left">
+                    <img src="{{ url_for('static', filename=(notification.actor_avatar or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+                </div>
+
+                <div class="notification-main">
+                    <div class="notification-text">{{ notification.text }}</div>
+                    <div class="notification-time" data-utc-time="{{ notification.created_at }}">{{ notification.created_at }}</div>
+                </div>
+            </a>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">Уведомлений пока нет</div>
+    {% endif %}
+</div>
+{% endblock %}

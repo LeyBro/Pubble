@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Сообщения{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Сообщения</h1>
+</div>
+
+<div class="messages-page-shell">
+    <div class="messages-page-card">
+        {% if conversations %}
+            <div class="messages-list">
+                {% for conversation in conversations %}
+                    <a class="smart-conversation-card" href="/messages/{{ conversation.id }}">
+                        <div class="conversation-top">
+                            <div class="conversation-user-line">
+                                <strong>@{{ conversation.other_username }}</strong>
+
+                                {% if conversation.unread_count and conversation.unread_count > 0 %}
+                                    <span class="conversation-badge">{{ conversation.unread_count }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if conversation.last_message_time %}
+                                <span data-utc-time="{{ conversation.last_message_time }}">{{ conversation.last_message_time }}</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="conversation-preview">
+                            {% if conversation.last_sender_username %}
+                                <span class="conversation-prefix">@{{ conversation.last_sender_username }}:</span>
+                            {% endif %}
+                            {{ conversation.last_message or "Диалог пока пуст" }}
+                        </p>
+                    </a>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="messages-empty">
+                <div class="messages-empty-icon">💬</div>
+                <h2>Диалогов пока нет</h2>
+                <p>Когда кто-то напишет тебе или ты начнёшь диалог, он появится здесь.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

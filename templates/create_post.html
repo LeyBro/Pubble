@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Новый пост{% endblock %}
+
+{% block content %}
+<div class="create-post-page">
+    <div class="create-post-card">
+        <div class="create-post-head">
+            <h1>Новый пост</h1>
+            <p>В Pubble можно публиковать до 3 постов за 24 часа.</p>
+        </div>
+
+        <form class="form create-post-form" method="POST" enctype="multipart/form-data">
+            <textarea name="content" rows="7" placeholder="Что нового?"></textarea>
+
+            <label class="file-upload-label">
+                <span>Добавить фото</span>
+                <input type="file" name="image" accept="image/*">
+            </label>
+
+            <button type="submit">Опубликовать</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

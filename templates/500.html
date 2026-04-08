@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}Ошибка сервера{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-code">500</div>
+    <h1>Что-то пошло не так</h1>
+    <p class="error-text">На сервере произошла ошибка. Попробуй обновить страницу позже.</p>
+    <a href="/" class="main-button">Вернуться в ленту</a>
+</div>
+{% endblock %}

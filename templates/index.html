@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Лента{% endblock %}
+
+{% block content %}
+
+{% if not session.get("user_id") %}
+    <div class="guest-center">
+        <div class="guest-card">
+            <h1>Добро пожаловать в Pubble</h1>
+            <p>Общайся, делись постами и находи друзей.</p>
+
+            <div class="guest-buttons">
+                <a href="/login" class="btn-primary">Войти</a>
+                <a href="/register" class="btn-secondary">Регистрация</a>
+            </div>
+        </div>
+    </div>
+{% else %}
+
+    <div class="page-top">
+        <div class="feed-tabs">
+            <a href="/" class="feed-tab {% if request.args.get('tab') != 'popular' %}active{% endif %}">Лента</a>
+            <a href="/?tab=popular" class="feed-tab {% if request.args.get('tab') == 'popular' %}active{% endif %}">Популярные</a>
+        </div>
+
+        <a class="main-button" href="/create-post">Написать пост</a>
+    </div>
+
+    <div class="posts">
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post">
+                    <div class="post-header">
+                        <div class="post-author-block">
+                            <img
+                                src="{{ url_for('static', filename=(post.avatar_url or 'default-avatar.jpg')) }}"
+                                class="post-author-avatar"
+                                alt="avatar"
+                            >
+                            <strong>
+                                <a class="username-link" href="/profile/{{ post.username }}">{{ post.username }}</a>
+                            </strong>
+                        </div>
+
+                        <span data-utc-time="{{ post.created_at }}">{{ post.created_at }}</span>
+                    </div>
+
+                    {% if post.content %}
+                        <p>{{ post.content }}</p>
+                    {% endif %}
+
+                    {% if post.image_url %}
+                        <div class="post-media">
+                            <img
+                                src="{{ url_for('static', filename=post.image_url) }}"
+                                class="post-image"
+                                alt="post image"
+                            >
+                        </div>
+                    {% endif %}
+
+                    <div class="post-actions post-actions-compact">
+                        <form method="POST" action="/like/{{ post.id }}">
+                            <button type="submit" class="action-mini">
+                                {% if post.is_liked %}❤️{% else %}🤍{% endif %}
+                                {{ post.likes_count }}
+                            </button>
+                        </form>
+
+                        <a class="comment-link action-mini" href="/post/{{ post.id }}">
+                            💬 {{ post.comments_count }}
+                        </a>
+
+                        {% if session.get('user_id') == post.author_id %}
+                            <a class="comment-link action-mini" href="/edit-post/{{ post.id }}">✏️</a>
+                        {% endif %}
+
+                        {% if session.get('user_id') == post.author_id or is_admin or is_moderator %}
+                            <form method="POST" action="/delete-post/{{ post.id }}">
+                                <button type="submit" class="delete-button action-mini">🗑️</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">Постов пока нет</div>
+        {% endif %}
+    </div>
+
+{% endif %}
+
+{% endblock %}

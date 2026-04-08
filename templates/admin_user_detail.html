@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Пользователь{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Пользователь #{{ user.id }}</h1>
+</div>
+
+<div class="profile-hero">
+    <div class="profile-hero-left">
+        <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="avatar-large" alt="avatar">
+    </div>
+
+    <div class="profile-hero-right">
+        <h1>@{{ user.username }}</h1>
+        <p>Email: {{ user.email }}</p>
+        <p>Дата регистрации: <span data-utc-time="{{ user.created_at }}">{{ user.created_at }}</span></p>
+
+        {% if user.last_seen_at %}
+            <p>Последняя активность: <span data-utc-time="{{ user.last_seen_at }}">{{ user.last_seen_at }}</span></p>
+        {% endif %}
+
+        <div class="profile-bio">
+            <p>Постов: {{ posts_count }}</p>
+            <p>Комментариев: {{ comments_count }}</p>
+            <p>Сообщений: {{ messages_count }}</p>
+            <p>Email подтверждён: {% if user.email_verified == 1 %}Да{% else %}Нет{% endif %}</p>
+            <p>Админ: {% if user.is_admin == 1 %}Да{% else %}Нет{% endif %}</p>
+            <p>Статус: {% if user.is_banned == 1 %}Забанен{% else %}Активен{% endif %}</p>
+
+            {% if user.ban_reason %}
+                <p>Причина бана: {{ user.ban_reason }}</p>
+            {% endif %}
+        </div>
+
+        <div class="profile-actions">
+            <a class="main-button" href="/profile/{{ user.username }}">Открыть профиль</a>
+
+            {% if user.is_banned == 0 and user.is_admin == 0 %}
+                <form method="POST" action="/admin/ban/{{ user.id }}" class="admin-inline-form">
+                    <input type="text" name="ban_reason" placeholder="Причина бана">
+                    <button type="submit" class="danger-zone-button">Забанить</button>
+                </form>
+            {% endif %}
+
+            {% if user.is_banned == 1 %}
+                <form method="POST" action="/admin/unban/{{ user.id }}">
+                    <button type="submit" class="main-button">Разбанить</button>
+                </form>
+            {% endif %}
+
+            {% if user.is_admin == 0 %}
+                <form method="POST" action="/admin/delete-user/{{ user.id }}" onsubmit="return confirm('Удалить аккаунт пользователя?')">
+                    <button type="submit" class="danger-zone-button">Удалить аккаунт</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

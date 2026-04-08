@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<div class="profile-hero">
+    <div class="profile-hero-left">
+        <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="avatar-large" alt="avatar">
+    </div>
+
+    <div class="profile-hero-right">
+        <h1>@{{ user.username }}</h1>
+        <p>Постов: {{ user.posts_count }}</p>
+        <p>На сайте с: <span data-utc-time="{{ user.created_at }}">{{ user.created_at }}</span></p>
+
+        {% if user.bio %}
+            <div class="profile-bio">{{ user.bio }}</div>
+        {% else %}
+            <div class="profile-bio empty-bio">Описание пока не добавлено</div>
+        {% endif %}
+
+        <div class="profile-actions">
+            {% if session.get('username') != user.username and session.get('user_id') %}
+                {% if friend_status == 'friends' %}
+                    <form method="POST" action="/friends/remove/{{ user.username }}">
+                        <button type="submit" class="main-button">Удалить из друзей</button>
+                    </form>
+                {% elif friend_status == 'sent' %}
+                    <div class="empty-state">Заявка уже отправлена</div>
+                {% elif friend_status == 'received' %}
+                    <a class="main-button" href="/friends">Открыть заявки</a>
+                {% else %}
+                    <form method="POST" action="/friends/request/{{ user.username }}">
+                        <button type="submit" class="main-button">Добавить в друзья</button>
+                    </form>
+                {% endif %}
+
+                {% if can_message %}
+                    <a class="main-button" href="/start-chat/{{ user.username }}">Написать сообщение</a>
+                {% else %}
+                    <div class="empty-state">Этот пользователь ограничил личные сообщения</div>
+                {% endif %}
+            {% endif %}
+
+            {% if session.get('username') == user.username %}
+                <a class="main-button" href="/edit-profile">Редактировать профиль</a>
+                <a class="main-button" href="/friends">Друзья</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="page-top">
+    <h2>Фото профиля</h2>
+</div>
+
+{% if session.get('username') == user.username %}
+    <form class="form" method="POST" action="/profile/photos/upload" enctype="multipart/form-data">
+        <input type="file" name="profile_photo" accept="image/*" required>
+        <button type="submit">Добавить фото</button>
+    </form>
+{% endif %}
+
+<div class="photo-grid">
+    {% if allow_photos %}
+        {% if profile_photos %}
+            {% for photo in profile_photos %}
+                <a class="photo-card-link" href="/profile-photo/{{ photo.id }}">
+                    <div class="photo-card">
+                        <img src="{{ url_for('static', filename=photo.image_url) }}" class="profile-gallery-image" alt="profile photo">
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">Фото пока нет</div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">Фото скрыты настройками приватности</div>
+    {% endif %}
+</div>
+
+<div class="page-top" style="margin-top: 24px;">
+    <h2>Посты пользователя</h2>
+
+    {% if session.get('username') == user.username %}
+        <a class="main-button" href="/create-post">Написать пост</a>
+    {% endif %}
+</div>
+
+<div class="posts">
+    {% if allow_posts %}
+        {% if posts %}
+            {% for post in posts %}
+                <div class="post">
+                    <div class="post-header profile-post-header">
+                        <div class="post-author-block">
+                            <img src="{{ url_for('static', filename=(post.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+
+                            <strong>
+                                <a class="username-link" href="/profile/{{ post.username }}">@{{ post.username }}</a>
+                            </strong>
+                        </div>
+
+                        <span data-utc-time="{{ post.created_at }}">{{ post.created_at }}</span>
+                    </div>
+
+                    {% if post.content %}
+                        <p>{{ post.content }}</p>
+                    {% endif %}
+
+                    {% if post.image_url %}
+                        <div class="post-media">
+                            <img src="{{ url_for('static', filename=post.image_url) }}" class="post-image" alt="post image">
+                        </div>
+                    {% endif %}
+
+                    <div class="post-actions">
+                        <form method="POST" action="/like/{{ post.id }}">
+                            <button type="submit">
+                                {% if post.is_liked %}❤️{% else %}🤍{% endif %}
+                                {{ post.likes_count }}
+                            </button>
+                        </form>
+
+                        <a class="comment-link" href="/post/{{ post.id }}">💬 {{ post.comments_count }}</a>
+
+                        {% if session.get('user_id') == post.author_id %}
+                            <div class="owner-actions">
+                                <a class="comment-link" href="/edit-post/{{ post.id }}">✏️</a>
+                                <form method="POST" action="/delete-post/{{ post.id }}">
+                                    <button type="submit" class="delete-button">🗑️</button>
+                                </form>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">У пользователя пока нет постов</div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">Посты скрыты настройками приватности</div>
+    {% endif %}
+</div>
+{% endblock %}

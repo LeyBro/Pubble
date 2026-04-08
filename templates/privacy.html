@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Приватность{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="settings-header">
+        <h1>Приватность</h1>
+        <p class="settings-subtitle">Управляй тем, кто видит твои данные и может тебе писать.</p>
+    </div>
+
+    <form class="settings-card" method="POST">
+        <div class="setting-group">
+            <label for="message_privacy" class="setting-label">Кто мне может писать</label>
+            <select name="message_privacy" id="message_privacy">
+                <option value="everyone" {% if user.message_privacy == 'everyone' %}selected{% endif %}>Все</option>
+                <option value="friends" {% if user.message_privacy == 'friends' %}selected{% endif %}>Только друзья</option>
+                <option value="nobody" {% if user.message_privacy == 'nobody' %}selected{% endif %}>Никто</option>
+            </select>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <div class="setting-group">
+            <label for="posts_visibility" class="setting-label">Кто может видеть мои посты</label>
+            <select name="posts_visibility" id="posts_visibility">
+                <option value="everyone" {% if user.posts_visibility == 'everyone' %}selected{% endif %}>Все</option>
+                <option value="friends" {% if user.posts_visibility == 'friends' %}selected{% endif %}>Только друзья</option>
+                <option value="nobody" {% if user.posts_visibility == 'nobody' %}selected{% endif %}>Никто</option>
+            </select>
+        </div>
+
+        <div class="settings-divider"></div>
+
+        <div class="setting-group">
+            <label for="photos_visibility" class="setting-label">Кто может видеть мои фото профиля</label>
+            <select name="photos_visibility" id="photos_visibility">
+                <option value="everyone" {% if user.photos_visibility == 'everyone' %}selected{% endif %}>Все</option>
+                <option value="friends" {% if user.photos_visibility == 'friends' %}selected{% endif %}>Только друзья</option>
+                <option value="nobody" {% if user.photos_visibility == 'nobody' %}selected{% endif %}>Никто</option>
+            </select>
+        </div>
+
+        <button type="submit" class="save-settings-btn">Сохранить</button>
+    </form>
+
+    <div class="danger-zone">
+        <h2>Опасная зона</h2>
+        <p>Удаление аккаунта удалит твои посты, фото и профиль навсегда.</p>
+
+        <form method="POST" action="/delete-account" onsubmit="return confirm('Ты точно хочешь удалить аккаунт? Это действие нельзя отменить.')">
+            <button type="submit" class="danger-zone-button">Удалить аккаунт</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

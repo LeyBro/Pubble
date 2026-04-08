@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-head">
+            <h1>Регистрация в Pubble</h1>
+            <p>Создай аккаунт и начни публиковать посты и общаться.</p>
+        </div>
+
+        <form class="form auth-form" method="POST">
+            <input type="text" name="username" placeholder="Логин" value="{{ form_data.username }}" required>
+            <input type="email" name="email" placeholder="Email" value="{{ form_data.email }}" required>
+
+            <div class="password-field">
+                <input type="password" name="password" id="registerPassword" placeholder="Пароль (минимум 8 символов)" required>
+                <button
+                    type="button"
+                    class="password-toggle"
+                    onclick="togglePassword('registerPassword', this)"
+                    data-eye="{{ url_for('static', filename='icons/free-icon-eye.png') }}"
+                    data-hide="{{ url_for('static', filename='icons/free-icon-hide.png') }}"
+                >
+                    <img src="{{ url_for('static', filename='icons/free-icon-eye.png') }}" alt="Показать пароль">
+                </button>
+            </div>
+
+            <div class="password-field">
+                <input type="password" name="password_repeat" id="registerPasswordRepeat" placeholder="Повторите пароль" required>
+                <button
+                    type="button"
+                    class="password-toggle"
+                    onclick="togglePassword('registerPasswordRepeat', this)"
+                    data-eye="{{ url_for('static', filename='icons/free-icon-eye.png') }}"
+                    data-hide="{{ url_for('static', filename='icons/free-icon-hide.png') }}"
+                >
+                    <img src="{{ url_for('static', filename='icons/free-icon-eye.png') }}" alt="Показать пароль">
+                </button>
+            </div>
+
+            <button type="submit">Создать аккаунт</button>
+        </form>
+
+        <p class="register-agreement">
+            Продолжая, вы соглашаетесь с
+            <a href="/terms">условиями использования</a>
+            и
+            <a href="/privacy-policy">политикой конфиденциальности</a>.
+        </p>
+
+        <div class="auth-links-block">
+            <a class="comment-link" href="/login">Уже есть аккаунт? Войти</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

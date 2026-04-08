@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}Личные сообщения{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Личные сообщения</h1>
+</div>
+
+<div class="admin-table-card">
+    {% if conversations %}
+        <div class="admin-user-list">
+            {% for conversation in conversations %}
+                <a class="admin-user-row" href="/admin/conversation/{{ conversation.id }}">
+                    <div class="admin-user-main">
+                        <strong>@{{ conversation.user1_username }} ↔ @{{ conversation.user2_username }}</strong>
+                        <div class="admin-user-meta">{{ conversation.last_message or "Диалог пуст" }}</div>
+                    </div>
+
+                    <div class="admin-user-meta">
+                        {% if conversation.last_message_time %}
+                            <span data-utc-time="{{ conversation.last_message_time }}">{{ conversation.last_message_time }}</span>
+                        {% endif %}
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Диалогов пока нет</div>
+    {% endif %}
+</div>
+{% endblock %}

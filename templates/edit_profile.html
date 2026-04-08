@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Редактировать профиль{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-head">
+            <h1>Редактировать профиль</h1>
+            <p>Обнови описание и аватарку.</p>
+        </div>
+
+        <form class="form auth-form" method="POST" enctype="multipart/form-data">
+            <textarea name="bio" rows="5" placeholder="Описание">{{ user.bio or '' }}</textarea>
+
+            <label class="file-upload-label">
+                <span>Новая аватарка</span>
+                <input type="file" name="avatar" accept="image/*">
+            </label>
+
+            <button type="submit">Сохранить</button>
+        </form>
+
+        {% if user.avatar_url %}
+            <form method="POST" action="/remove-avatar" style="margin-top: 12px;">
+                <button type="submit" class="danger-zone-button">Удалить аватарку</button>
+            </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Поиск{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Поиск пользователей</h1>
+</div>
+
+<form class="form" method="GET" action="/search">
+    <input type="text" name="q" placeholder="Введи username" value="{{ query }}">
+    <button type="submit">Найти</button>
+</form>
+
+<div class="posts">
+    {% if query %}
+        {% if users %}
+            {% for user in users %}
+                <a class="conversation-card" href="/profile/{{ user.username }}">
+                    <div class="post-author-block">
+                        <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+
+                        <div>
+                            <strong>@{{ user.username }}</strong>
+                            {% if user.bio %}
+                                <p style="margin: 6px 0 0 0;">{{ user.bio }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+                </a>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">Ничего не найдено</div>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">Начни вводить username для поиска</div>
+    {% endif %}
+</div>
+{% endblock %}

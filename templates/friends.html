@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Друзья{% endblock %}
+
+{% block content %}
+<div class="page-top">
+    <h1>Друзья</h1>
+</div>
+
+<div class="friends-sections">
+    <section class="friends-section">
+        <h2>Входящие заявки</h2>
+
+        {% if incoming_requests %}
+            <div class="friends-list">
+                {% for user in incoming_requests %}
+                    <div class="friend-card">
+                        <div class="friend-card-left">
+                            <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+
+                            <div>
+                                <strong>
+                                    <a class="username-link" href="/profile/{{ user.username }}">@{{ user.username }}</a>
+                                </strong>
+
+                                {% if user.bio %}
+                                    <p class="friend-bio">{{ user.bio }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="friend-card-actions">
+                            <form method="POST" action="/friends/accept/{{ user.id }}">
+                                <button type="submit" class="main-button">Принять</button>
+                            </form>
+
+                            <form method="POST" action="/friends/decline/{{ user.id }}">
+                                <button type="submit" class="delete-button">Отклонить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Входящих заявок пока нет</div>
+        {% endif %}
+    </section>
+
+    <section class="friends-section">
+        <h2>Исходящие заявки</h2>
+
+        {% if outgoing_requests %}
+            <div class="friends-list">
+                {% for user in outgoing_requests %}
+                    <div class="friend-card">
+                        <div class="friend-card-left">
+                            <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+
+                            <div>
+                                <strong>
+                                    <a class="username-link" href="/profile/{{ user.username }}">@{{ user.username }}</a>
+                                </strong>
+
+                                {% if user.bio %}
+                                    <p class="friend-bio">{{ user.bio }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="friend-card-actions">
+                            <form method="POST" action="/friends/cancel/{{ user.id }}">
+                                <button type="submit" class="delete-button">Отменить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">Исходящих заявок пока нет</div>
+        {% endif %}
+    </section>
+
+    <section class="friends-section">
+        <h2>Мои друзья</h2>
+
+        {% if friends %}
+            <div class="friends-list">
+                {% for user in friends %}
+                    <div class="friend-card">
+                        <div class="friend-card-left">
+                            <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
+
+                            <div>
+                                <strong>
+                                    <a class="username-link" href="/profile/{{ user.username }}">@{{ user.username }}</a>
+                                </strong>
+
+                                {% if user.bio %}
+                                    <p class="friend-bio">{{ user.bio }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="friend-card-actions">
+                            <a href="/start-chat/{{ user.username }}" class="main-button">Написать</a>
+
+                            <form method="POST" action="/friends/remove/{{ user.username }}">
+                                <button type="submit" class="delete-button">Удалить</button>
+                            </form>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">У тебя пока нет друзей</div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}
