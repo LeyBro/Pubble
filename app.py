@@ -24,8 +24,8 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 MAIL_ENABLED = True
 MAIL_HOST = "smtp.gmail.com"
 MAIL_PORT = 587
-MAIL_USERNAME = "newcodechat@gmail.com"
-MAIL_PASSWORD = "xmrhzlitlojfwmsn"
+MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 MAIL_FROM = "newcodechat@gmail.com"
 
 MAX_POST_LENGTH = 1000
