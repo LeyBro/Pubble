@@ -21,7 +21,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAIL_ENABLED = True
+MAIL_ENABLED = False
 MAIL_HOST = "smtp.gmail.com"
 MAIL_PORT = 587
 MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
