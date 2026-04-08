@@ -1165,6 +1165,12 @@ def delete_profile_photo(photo_id):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form_data = {"username": "", "email": ""}
+    password = request.form.get("password", "")
+    password_repeat = request.form.get("password_repeat", "")
+
+    if password != password_repeat:
+        flash("Пароли не совпадают")
+        return redirect(url_for("register"))
 
     if request.method == "POST":
         username = request.form["username"].strip()
