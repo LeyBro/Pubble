@@ -22,7 +22,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAIL_ENABLED = False
+MAIL_ENABLED = True
 MAIL_FROM = "noreply@web-pubble.com"
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
@@ -155,6 +155,7 @@ def is_reset_code_expired(expires_at):
 def send_email_message(to_email, subject, body):
     if not MAIL_ENABLED:
         print("EMAIL DISABLED")
+        print("SENDING FROM:", MAIL_FROM)
         return False
 
     if not RESEND_API_KEY:
