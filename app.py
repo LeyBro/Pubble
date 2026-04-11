@@ -22,11 +22,11 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 MAIL_ENABLED = False
-MAIL_HOST = "smtp.gmail.com"
+MAIL_HOST = "smtp.resend.com"
 MAIL_PORT = 587
-MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+MAIL_USERNAME = "resend"
 MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
-MAIL_FROM = "newcodechat@gmail.com"
+MAIL_FROM = "noreply@web-pubble.com"
 
 MAX_POST_LENGTH = 1000
 MAX_COMMENT_LENGTH = 500
