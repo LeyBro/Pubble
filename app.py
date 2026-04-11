@@ -22,7 +22,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAIL_ENABLED = True
+MAIL_ENABLED = False
 MAIL_FROM = "noreply@web-pubble.com"
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
@@ -31,18 +31,6 @@ MAX_COMMENT_LENGTH = 500
 MAX_MESSAGE_LENGTH = 2000
 MAX_BIO_LENGTH = 300
 MAX_POSTS_PER_24H = 3
-
-
-def is_admin_user(conn, user_id):
-    if not user_id:
-        return False
-
-    user = conn.execute(
-        "SELECT is_admin FROM users WHERE id = ?",
-        (user_id,)
-    ).fetchone()
-
-    return bool(user and user["is_admin"] == 1)
 
 
 def update_last_seen(user_id):
@@ -155,7 +143,6 @@ def is_reset_code_expired(expires_at):
 def send_email_message(to_email, subject, body):
     if not MAIL_ENABLED:
         print("EMAIL DISABLED")
-        print("SENDING FROM:", MAIL_FROM)
         return False
 
     if not RESEND_API_KEY:
@@ -175,21 +162,17 @@ def send_email_message(to_email, subject, body):
                 "subject": subject,
                 "text": body,
             },
-            timeout=15,
+            timeout=5,  # ⬅️ УМЕНЬШИЛИ
         )
 
         print("RESEND STATUS:", response.status_code)
-        print("RESEND RESPONSE:", response.text)
 
         return response.status_code in (200, 201)
 
-    except requests.exceptions.RequestException as e:
-        print("RESEND REQUEST ERROR:", repr(e))
-        return False
     except Exception as e:
-        print("RESEND UNKNOWN ERROR:", repr(e))
+        print("EMAIL ERROR:", repr(e))
         return False
-        
+                
 
 def send_verification_email(to_email, code):
     subject = "Подтверждение email для Pubble"
