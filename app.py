@@ -153,13 +153,6 @@ def is_reset_code_expired(expires_at):
 
 
 def send_email_message(to_email, subject, body):
-    if not MAIL_ENABLED:
-        return False
-    
-    if not RESEND_API_KEY:
-        print("EMAIL ERROR: RESEND_API_KEY not set")
-        return False
-    
     try:
         response = requests.post(
             "https://api.resend.com/emails",
@@ -1206,8 +1199,10 @@ def register():
             try:
                 sent = send_verification_email(email, verification_code)
 
+                print("EMAIL SENT RESULT:", sent)
+
                 if not sent:
-                    flash ("Ошибка отправки почты")
+                    flash ("Ошибка отправки письма, попробуйте позже")
                     return redirect(url_for("register"))
             except Exception as e:
                 print("EMAIL ERROR:", e)
