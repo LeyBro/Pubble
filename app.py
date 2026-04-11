@@ -180,10 +180,7 @@ def send_email_message(to_email, subject, body):
         print("RESEND STATUS:", response.status_code)
         print("RESEND RESPONSE:", response.text)
 
-        if response.status_code not in (200, 201):
-            return False
-
-        return True
+        return response.status_code in (200, 201)
 
     except requests.exceptions.RequestException as e:
         print("RESEND REQUEST ERROR:", repr(e))
@@ -191,7 +188,7 @@ def send_email_message(to_email, subject, body):
     except Exception as e:
         print("RESEND UNKNOWN ERROR:", repr(e))
         return False
-    
+        
 
 def send_verification_email(to_email, code):
     subject = "Подтверждение email для Pubble"
