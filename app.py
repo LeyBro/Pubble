@@ -1169,8 +1169,8 @@ def register():
     if request.method == "POST":
         username = request.form["username"].strip()
         email = request.form["email"].strip()
-        password = request.form("password", "")
-        password_repeat = request.form.get
+        password = request.form.get("password", "")
+        password_repeat = request.form.get("password_repeat", "")
 
         if password != password_repeat:
             flash("Пароли не совпадают")
