@@ -9,7 +9,7 @@
     </div>
 
     <div class="profile-hero-right">
-        <h1>@{{ user.username }}</h1>
+        <h1>{{ user.username }}</h1>
         <p>Постов: {{ user.posts_count }}</p>
         <p>На сайте с: <span data-utc-time="{{ user.created_at }}">{{ user.created_at }}</span></p>
 
@@ -97,7 +97,7 @@
                             <img src="{{ url_for('static', filename=(post.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
 
                             <strong>
-                                <a class="username-link" href="/profile/{{ post.username }}">@{{ post.username }}</a>
+                                <a class="username-link" href="/profile/{{ post.username }}">{{ post.username }}</a>
                             </strong>
                         </div>
 

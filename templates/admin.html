@@ -63,7 +63,7 @@
         {% for user in recent_users %}
             <a class="admin-user-row" href="/admin/user/{{ user.id }}">
                 <div>
-                    <strong>@{{ user.username }}</strong>
+                    <strong>{{ user.username }}</strong>
                     <div class="admin-user-meta">{{ user.email }}</div>
                 </div>
 

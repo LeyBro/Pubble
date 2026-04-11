@@ -155,32 +155,32 @@ def is_reset_code_expired(expires_at):
 
 
 def send_email_message(to_email, subject, body):
-    if not MAIL_ENABLED:
+    if not MAIL_ENABLED:\
+        return False
+    
+    try:
         print("\n================ EMAIL DEBUG =======================")
         print(f"Email: {to_email}")
         print(f"Subject: {subject}")
         print(body)
         print("===================================================\n")
-        return True
 
-    msg = MIMEMultipart()
-    msg["From"] = MAIL_FROM
-    msg["To"] = to_email
-    msg["Subject"] = subject
-    msg.attach(MIMEText(body, "plain", "utf-8"))
+        msg = MIMEMultipart()
+        msg["From"] = MAIL_FROM
+        msg["To"] = to_email
+        msg["Subject"] = subject
+        msg.attach(MIMEText(body, "plain", "utf-8"))
 
-    try:
         server = smtplib.SMTP(MAIL_HOST, MAIL_PORT)
         server.starttls()
         server.login(MAIL_USERNAME, MAIL_PASSWORD)
         server.sendmail(MAIL_FROM, to_email, msg.as_string())
         server.quit()
+    
         return True
+    
     except Exception as e:
-        print("\n================ EMAIL ERROR =======================")
-        print(f"Не удалось отправить письмо на {to_email}")
-        print(str(e))
-        print("===================================================\n")
+        print("EMAIL ERROR:", e)
         return False
 
 
@@ -970,7 +970,7 @@ def send_friend_request(username):
             target["id"],
             session["user_id"],
             "friend_request",
-            f"@{session['username']} отправил тебе заявку в друзья",
+            f"{session['username']} отправил тебе заявку в друзья",
             "/friends"
         )
 
@@ -1165,17 +1165,17 @@ def delete_profile_photo(photo_id):
 @app.route("/register", methods=["GET", "POST"])
 def register():
     form_data = {"username": "", "email": ""}
-    password = request.form.get("password", "")
-    password_repeat = request.form.get("password_repeat", "")
-
-    if password != password_repeat:
-        flash("Пароли не совпадают")
-        return redirect(url_for("register"))
 
     if request.method == "POST":
         username = request.form["username"].strip()
         email = request.form["email"].strip()
-        password = request.form["password"].strip()
+        password = request.form("password", "")
+        password_repeat = request.form.get
+
+        if password != password_repeat:
+            flash("Пароли не совпадают")
+            return redirect(url_for("register"))
+
 
         form_data["username"] = username
         form_data["email"] = email
@@ -1203,6 +1203,10 @@ def register():
                 conn.commit()
             try:
                 sent = send_verification_email(email, verification_code)
+
+                if not sent:
+                    flash ("Ошибка отправки почты")
+                    return redirect(url_for("register"))
             except Exception as e:
                 print("EMAIL ERROR:", e)
                 sent = False
@@ -1711,7 +1715,7 @@ def toggle_like(post_id):
                     post["author_id"],
                     session["user_id"],
                     "post_like",
-                    f"@{session['username']} лайкнул твой пост",
+                    f"{session['username']} лайкнул твой пост",
                     f"/post/{post_id}"
                 )
 
@@ -1757,7 +1761,7 @@ def add_comment(post_id):
                 post["author_id"],
                 session["user_id"],
                 "post_comment",
-                f"@{session['username']} прокомментировал твой пост",
+                f"{session['username']} прокомментировал твой пост",
                 f"/post/{post_id}"
             )
 
@@ -2436,7 +2440,7 @@ def delete_account():
         conn.commit()
 
     session.clear()
-    flash(f"Аккаунт @{username} удалён")
+    flash(f"Аккаунт {username} удалён")
     return redirect(url_for("index"))
 
 @app.route("/liked")
@@ -2812,7 +2816,7 @@ def admin_ban_user(user_id):
         """, (reason, user_id))
         conn.commit()
 
-    flash(f"Пользователь @{user['username']} забанен")
+    flash(f"Пользователь {user['username']} забанен")
     return redirect(url_for("admin_user_detail", user_id=user_id))
 
 
@@ -2838,7 +2842,7 @@ def admin_unban_user(user_id):
         """, (user_id,))
         conn.commit()
 
-    flash(f"Пользователь @{user['username']} разбанен")
+    flash(f"Пользователь {user['username']} разбанен")
     return redirect(url_for("admin_user_detail", user_id=user_id))
 
 
@@ -2899,7 +2903,7 @@ def admin_delete_user(user_id):
         conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
         conn.commit()
 
-    flash(f"Аккаунт @{user['username']} удалён администратором")
+    flash(f"Аккаунт {user['username']} удалён администратором")
     return redirect(url_for("admin_users"))
 
 @app.context_processor

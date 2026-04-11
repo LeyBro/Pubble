@@ -15,7 +15,7 @@
                     <div class="post-author-block">
                         <img src="{{ url_for('static', filename=(post.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
                         <strong>
-                            <a class="username-link" href="/profile/{{ post.username }}">@{{ post.username }}</a>
+                            <a class="username-link" href="/profile/{{ post.username }}">{{ post.username }}</a>
                         </strong>
                     </div>
 

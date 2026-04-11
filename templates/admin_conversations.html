@@ -13,7 +13,7 @@
             {% for conversation in conversations %}
                 <a class="admin-user-row" href="/admin/conversation/{{ conversation.id }}">
                     <div class="admin-user-main">
-                        <strong>@{{ conversation.user1_username }} ↔ @{{ conversation.user2_username }}</strong>
+                        <strong>{{ conversation.user1_username }} ↔ {{ conversation.user2_username }}</strong>
                         <div class="admin-user-meta">{{ conversation.last_message or "Диалог пуст" }}</div>
                     </div>
 

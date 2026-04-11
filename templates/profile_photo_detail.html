@@ -28,7 +28,7 @@
                     alt="avatar"
                 >
                 <strong>
-                    <a class="username-link" href="/profile/{{ photo.username }}">@{{ photo.username }}</a>
+                    <a class="username-link" href="/profile/{{ photo.username }}">{{ photo.username }}</a>
                 </strong>
             </div>
 
@@ -76,7 +76,7 @@
                                     class="post-author-avatar"
                                     alt="avatar"
                                 >
-                                <strong>@{{ comment.username }}</strong>
+                                <strong>{{ comment.username }}</strong>
                             </div>
 
                             <span data-utc-time="{{ comment.created_at }}">{{ comment.created_at }}</span>

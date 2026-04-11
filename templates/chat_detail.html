@@ -12,7 +12,7 @@
                 class="chat-user-avatar"
             >
             <div class="chat-user-meta">
-                <div class="chat-user-name">@{{ other_user.username }}</div>
+                <div class="chat-user-name">{{ other_user.username }}</div>
                 <div class="chat-user-status {% if other_user_status == 'в сети' %}chat-user-status-online{% endif %}">
                     {{ other_user_status }}
                 </div>
@@ -27,7 +27,7 @@
                 <div class="message-row {% if message.sender_id == session.get('user_id') %}message-row-me{% else %}message-row-other{% endif %}">
                     <div class="message-bubble {% if message.sender_id == session.get('user_id') %}my-bubble{% else %}their-bubble{% endif %}">
                         <div class="message-meta">
-                            <strong>@{{ message.username }}</strong>
+                            <strong>{{ message.username }}</strong>
                             <span data-utc-time="{{ message.created_at }}">{{ message.created_at }}</span>
                         </div>
 

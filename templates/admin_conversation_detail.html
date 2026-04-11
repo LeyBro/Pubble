@@ -4,7 +4,7 @@
 
 {% block content %}
 <div class="page-top">
-    <h1>@{{ conversation.user1_username }} ↔ @{{ conversation.user2_username }}</h1>
+    <h1>{{ conversation.user1_username }} ↔ {{ conversation.user2_username }}</h1>
 </div>
 
 <div class="chat-box">
@@ -12,7 +12,7 @@
         {% for message in messages %}
             <div class="comment message {% if message.sender_id == conversation.user1_id %}their-message{% else %}my-message{% endif %}">
                 <div class="comment-header">
-                    <strong>@{{ message.username }}</strong>
+                    <strong>{{ message.username }}</strong>
                     <span data-utc-time="{{ message.created_at }}">{{ message.created_at }}</span>
                 </div>
                 <p>{{ message.content }}</p>

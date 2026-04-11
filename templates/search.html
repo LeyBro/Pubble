@@ -21,7 +21,7 @@
                         <img src="{{ url_for('static', filename=(user.avatar_url or 'default-avatar.jpg')) }}" class="post-author-avatar" alt="avatar">
 
                         <div>
-                            <strong>@{{ user.username }}</strong>
+                            <strong>{{ user.username }}</strong>
                             {% if user.bio %}
                                 <p style="margin: 6px 0 0 0;">{{ user.bio }}</p>
                             {% endif %}

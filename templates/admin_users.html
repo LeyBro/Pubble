@@ -18,7 +18,7 @@
             {% for user in users %}
                 <a class="admin-user-row" href="/admin/user/{{ user.id }}">
                     <div class="admin-user-main">
-                        <strong>#{{ user.id }} · @{{ user.username }}</strong>
+                        <strong>#{{ user.id }} · {{ user.username }}</strong>
                         <div class="admin-user-meta">{{ user.email }}</div>
                     </div>
 
