@@ -3,19 +3,36 @@
 {% block title %}Подтверждение email{% endblock %}
 
 {% block content %}
-<div class="page-top">
-    <h1>Подтверждение email</h1>
+<div class="auth-page">
+    <div class="auth-card">
+        <h1>Подтверждение email</h1>
+
+        <p class="auth-subtitle">
+            Мы отправили код подтверждения на:
+        </p>
+
+        <p class="auth-email"><strong>{{ email }}</strong></p>
+
+        <form method="POST" class="form auth-form">
+            <input
+                type="text"
+                name="code"
+                placeholder="Введи 6-значный код"
+                maxlength="6"
+                required
+            >
+
+            <button type="submit" class="btn-primary">
+                Подтвердить email
+            </button>
+        </form>
+
+        <form method="POST" action="{{ url_for('resend_verification_code') }}" class="resend-form">
+            <input type="hidden" name="email" value="{{ email }}">
+            <button type="submit" class="btn-secondary">
+                Отправить новый код
+            </button>
+        </form>
+    </div>
 </div>
-
-<form class="form" method="POST">
-    <p>Мы отправили код подтверждения на:</p>
-    <p><strong>{{ email }}</strong></p>
-
-    <input type="text" name="code" placeholder="Введи 6-значный код" maxlength="6" required>
-    <button type="submit">Подтвердить email</button>
-</form>
-
-<form method="POST" action="/resend-verification/{{ email }}" style="margin-top: 12px;">
-    <button type="submit" class="main-button">Отправить новый код</button>
-</form>
 {% endblock %}
