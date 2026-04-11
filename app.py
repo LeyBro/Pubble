@@ -153,6 +153,14 @@ def is_reset_code_expired(expires_at):
 
 
 def send_email_message(to_email, subject, body):
+    if not MAIL_ENABLED:
+        print("EMAIL DISABLED")
+        return False
+
+    if not RESEND_API_KEY:
+        print("EMAIL ERROR: RESEND_API_KEY not set")
+        return False
+
     try:
         response = requests.post(
             "https://api.resend.com/emails",
@@ -172,12 +180,18 @@ def send_email_message(to_email, subject, body):
         print("RESEND STATUS:", response.status_code)
         print("RESEND RESPONSE:", response.text)
 
-        return response.status_code in (200, 201)
-    
-    except Exception as e:
-        print("EMAIL ERROR:", e)
-        return False
+        if response.status_code not in (200, 201):
+            return False
 
+        return True
+
+    except requests.exceptions.RequestException as e:
+        print("RESEND REQUEST ERROR:", repr(e))
+        return False
+    except Exception as e:
+        print("RESEND UNKNOWN ERROR:", repr(e))
+        return False
+    
 
 def send_verification_email(to_email, code):
     subject = "Подтверждение email для Pubble"
