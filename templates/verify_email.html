@@ -27,7 +27,7 @@
             </button>
         </form>
 
-        <form method="POST" action="{{ url_for('resend_verification') }}" class="resend-form">
+        <form method="POST" action="{{ url_for('resend_verification', email=email) }}" class="resend-form">
             <input type="hidden" name="email" value="{{ email }}">
             <button type="submit" class="btn-secondary">
                 Отправить новый код
