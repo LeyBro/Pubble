@@ -2,6 +2,7 @@ import os
 import sqlite3
 import random
 import smtplib
+import requests
 from functools import wraps
 from datetime import datetime, timedelta
 from email.mime.text import MIMEText
@@ -22,11 +23,8 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 MAIL_ENABLED = True
-MAIL_HOST = "smtp.resend.com"
-MAIL_PORT = 587
-MAIL_USERNAME = "resend"
-MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
 MAIL_FROM = "noreply@web-pubble.com"
+RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
 MAX_POST_LENGTH = 1000
 MAX_COMMENT_LENGTH = 500
@@ -155,29 +153,33 @@ def is_reset_code_expired(expires_at):
 
 
 def send_email_message(to_email, subject, body):
-    if not MAIL_ENABLED:\
+    if not MAIL_ENABLED:
+        return False
+    
+    if not RESEND_API_KEY:
+        print("EMAIL ERROR: RESEND_API_KEY not set")
         return False
     
     try:
-        print("\n================ EMAIL DEBUG =======================")
-        print(f"Email: {to_email}")
-        print(f"Subject: {subject}")
-        print(body)
-        print("===================================================\n")
+        response = requests.post(
+            "https://api.resend.com/emails",
+            headers={
+                "Authorization": f"Bearer {RESEND_API_KEY}",
+                "Content-Type": "application/json",
+            },
+            json={
+                "from": MAIL_FROM,
+                "to": [to_email],
+                "subject": subject,
+                "text": body,
+            },
+            timeout=15,
+        )
 
-        msg = MIMEMultipart()
-        msg["From"] = MAIL_FROM
-        msg["To"] = to_email
-        msg["Subject"] = subject
-        msg.attach(MIMEText(body, "plain", "utf-8"))
+        print("RESEND STATUS:", response.status_code)
+        print("RESEND RESPONSE:", response.text)
 
-        server = smtplib.SMTP(MAIL_HOST, MAIL_PORT)
-        server.starttls()
-        server.login(MAIL_USERNAME, MAIL_PASSWORD)
-        server.sendmail(MAIL_FROM, to_email, msg.as_string())
-        server.quit()
-    
-        return True
+        return response.status_code in (200, 201)
     
     except Exception as e:
         print("EMAIL ERROR:", e)
