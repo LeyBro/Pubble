@@ -21,7 +21,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAIL_ENABLED = False
+MAIL_ENABLED = True
 MAIL_HOST = "smtp.resend.com"
 MAIL_PORT = 587
 MAIL_USERNAME = "resend"
