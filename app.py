@@ -1181,13 +1181,12 @@ def register():
         password = request.form.get("password", "")
         password_repeat = request.form.get("password_repeat", "")
 
-        if password != password_repeat:
-            flash("Пароли не совпадают")
-            return redirect(url_for("register"))
-
-
         form_data["username"] = username
         form_data["email"] = email
+
+        if password != password_repeat:
+            flash("Пароли не совпадают")
+            return render_template("register.html", form_data=form_data)
 
         if not username or not email or not password:
             flash("Заполни все поля")
@@ -1210,28 +1209,25 @@ def register():
                     VALUES (?, ?, ?, 0, ?)
                 """, (username, email, hashed_password, verification_code))
                 conn.commit()
-            try:
-                sent = send_verification_email(email, verification_code)
-
-                print("EMAIL SENT RESULT:", sent)
-
-                if not sent:
-                    flash ("Ошибка отправки письма, попробуйте позже")
-                    return redirect(url_for("register"))
-            except Exception as e:
-                print("EMAIL ERROR:", e)
-                sent = False
-
-            if sent:
-                flash("Аккаунт создан. Код подтверждения отправлен на email.")
-            else:
-                flash("Аккаунт создан, но письмо не отправилось. Проверь настройки почты.")
-
-            return redirect(url_for("verify_email", email=email))
 
         except sqlite3.IntegrityError:
             flash("Такой логин или email уже существует")
             return render_template("register.html", form_data=form_data)
+
+        sent = False
+        try:
+            sent = send_verification_email(email, verification_code)
+            print("EMAIL SENT RESULT:", sent)
+        except Exception as e:
+            print("EMAIL ERROR:", repr(e))
+            sent = False
+
+        if sent:
+            flash("Аккаунт создан. Код подтверждения отправлен на email.")
+        else:
+            flash("Аккаунт создан, но письмо не отправилось. Попробуй отправить код ещё раз.")
+
+        return redirect(url_for("verify_email", email=email))
 
     return render_template("register.html", form_data=form_data)
 
