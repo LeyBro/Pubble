@@ -22,7 +22,7 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-MAIL_ENABLED = True
+MAIL_ENABLED = False
 MAIL_FROM = "noreply@web-pubble.com"
 RESEND_API_KEY = os.environ.get("RESEND_API_KEY")
 
