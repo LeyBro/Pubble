@@ -29,7 +29,6 @@
                     <a class="desktop-logo" href="/">pubble</a>
 
                     <nav class="desktop-nav">
-                        <a href="{{ url_for('settings') }}">Настройки</a>
                         <a href="/" class="desktop-nav-link {% if request.path == '/' and request.args.get('tab') != 'popular' %}active{% endif %}">Лента</a>
 
                         <a href="/messages" class="desktop-nav-link {% if request.path.startswith('/messages') %}active{% endif %}">
