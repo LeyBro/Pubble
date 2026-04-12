@@ -2,3 +2,4 @@ flask
 gunicorn
 Werkzeug
 requests
+flask-limiter

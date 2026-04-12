@@ -10,11 +10,17 @@ from email.mime.multipart import MIMEMultipart
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from datetime import timedelta
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 
 MAINTENANCE_MODE = False
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
+
+app.permanent_session_lifetime = timedelta(days=30)
+limiter = Limiter(get_remote_address, app=app)
 
 DATABASE = "database.db"
 UPLOAD_FOLDER = os.path.join("static", "uploads")
@@ -1461,7 +1467,7 @@ def reset_password():
 
     return render_template("reset_password.html", email=email)
 
-
+@limiter.limit("5 per minute")
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -1494,6 +1500,7 @@ def login():
 
                     return redirect(url_for("verify_email", email=user["email"]))
 
+                session.permanent = True
                 session["user_id"] = user["id"]
                 session["username"] = user["username"]
                 session["avatar_url"] = user["avatar_url"] or ""
