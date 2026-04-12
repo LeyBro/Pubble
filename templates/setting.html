@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Настройки{% endblock %}
+
+{% block content %}
+<div class="settings-page">
+    <div class="settings-card">
+        <h1>Настройки</h1>
+
+        <form method="POST" class="settings-form">
+            <div class="settings-group">
+                <label for="theme">Тема</label>
+                <select name="theme" id="theme">
+                    <option value="light" {% if user["theme"] == "light" %}selected{% endif %}>Светлая</option>
+                    <option value="dark" {% if user["theme"] == "dark" %}selected{% endif %}>Тёмная</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label for="message_privacy">Кто может писать мне</label>
+                <select name="message_privacy" id="message_privacy">
+                    <option value="everyone" {% if user["message_privacy"] == "everyone" %}selected{% endif %}>Все</option>
+                    <option value="friends" {% if user["message_privacy"] == "friends" %}selected{% endif %}>Только друзья</option>
+                    <option value="nobody" {% if user["message_privacy"] == "nobody" %}selected{% endif %}>Никто</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label for="posts_visibility">Кто видит мои посты</label>
+                <select name="posts_visibility" id="posts_visibility">
+                    <option value="everyone" {% if user["posts_visibility"] == "everyone" %}selected{% endif %}>Все</option>
+                    <option value="friends" {% if user["posts_visibility"] == "friends" %}selected{% endif %}>Только друзья</option>
+                    <option value="nobody" {% if user["posts_visibility"] == "nobody" %}selected{% endif %}>Никто</option>
+                </select>
+            </div>
+
+            <div class="settings-group">
+                <label for="photos_visibility">Кто видит мои фото</label>
+                <select name="photos_visibility" id="photos_visibility">
+                    <option value="everyone" {% if user["photos_visibility"] == "everyone" %}selected{% endif %}>Все</option>
+                    <option value="friends" {% if user["photos_visibility"] == "friends" %}selected{% endif %}>Только друзья</option>
+                    <option value="nobody" {% if user["photos_visibility"] == "nobody" %}selected{% endif %}>Никто</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary">Сохранить настройки</button>
+        </form>
+
+        <div class="settings-danger-zone">
+            <h2>Аккаунт</h2>
+            <a href="{{ url_for('logout') }}" class="btn-danger">Выйти из аккаунта</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

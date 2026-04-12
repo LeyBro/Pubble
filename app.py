@@ -499,7 +499,8 @@ def init_db():
                 is_banned INTEGER DEFAULT 0,
                 ban_reason TEXT DEFAULT '',
                 banned_at TIMESTAMP,
-                last_seen_at TIMESTAMP
+                last_seen_at TIMESTAMP,
+                theme TEXT DEFAULT 'light'
             )
         """)
 
@@ -553,6 +554,9 @@ def init_db():
 
         if "is_moderator" not in user_columns:
             cursor.execute("ALTER TABLE users ADD COLUMN is_moderator INTEGER DEFAULT 0")
+        
+        if "theme" not in user_columns:
+            cursor.execute("ALTER TABLE users ADD COLUMN theme TEXT DEFAULT 'light'")
 
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS posts (
@@ -3018,6 +3022,68 @@ def admin_conversation_detail(conversation_id):
         messages=messages
     )
 
+@app.route("/settings", methods=["GET", "POST"])
+def settings():
+    if not session.get("user_id"):
+        flash("Сначала войди в аккаунт")
+        return redirect(url_for("login"))
+
+    with get_db_connection() as conn:
+        user = conn.execute(
+            "SELECT * FROM users WHERE id = ?",
+            (session["user_id"],)
+        ).fetchone()
+
+        if not user:
+            session.clear()
+            flash("Пользователь не найден")
+            return redirect(url_for("login"))
+
+        if request.method == "POST":
+            theme = request.form.get("theme", "light").strip()
+            message_privacy = request.form.get("message_privacy", "everyone").strip()
+            posts_visibility = request.form.get("posts_visibility", "everyone").strip()
+            photos_visibility = request.form.get("photos_visibility", "everyone").strip()
+
+            if theme not in ["light", "dark"]:
+                theme = "light"
+
+            if message_privacy not in ["everyone", "friends", "nobody"]:
+                message_privacy = "everyone"
+
+            if posts_visibility not in ["everyone", "friends", "nobody"]:
+                posts_visibility = "everyone"
+
+            if photos_visibility not in ["everyone", "friends", "nobody"]:
+                photos_visibility = "everyone"
+
+            conn.execute("""
+                UPDATE users
+                SET theme = ?,
+                    message_privacy = ?,
+                    posts_visibility = ?,
+                    photos_visibility = ?
+                WHERE id = ?
+            """, (
+                theme,
+                message_privacy,
+                posts_visibility,
+                photos_visibility,
+                session["user_id"]
+            ))
+            conn.commit()
+
+            flash("Настройки сохранены")
+            return redirect(url_for("settings"))
+
+        friends_notifications, messages_notifications = get_notifications(conn, session["user_id"])
+
+    return render_template(
+        "settings.html",
+        user=user,
+        friends_notifications=friends_notifications,
+        messages_notifications=messages_notifications
+    )
 
 if __name__ == "__main__":
     init_db()

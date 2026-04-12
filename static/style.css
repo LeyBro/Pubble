@@ -3641,3 +3641,81 @@ html[data-theme="purple"] .desktop-search input::placeholder {
 .btn-secondary:hover {
     opacity: 0.92;
 }
+
+.settings-page {
+    display: flex;
+    justify-content: center;
+    padding: 30px 20px;
+}
+
+.settings-card {
+    width: 100%;
+    max-width: 720px;
+    background: #fff;
+    border-radius: 24px;
+    padding: 28px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.settings-card h1 {
+    margin: 0 0 24px;
+    font-size: 32px;
+}
+
+.settings-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.settings-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.settings-group label {
+    font-weight: 600;
+    color: #111;
+}
+
+.settings-group select {
+    padding: 14px 16px;
+    border: 1px solid #ddd;
+    border-radius: 14px;
+    font-size: 16px;
+    background: #fff;
+}
+
+.btn-primary {
+    margin-top: 8px;
+    background: #0b1020;
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 16px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.settings-danger-zone {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #eee;
+}
+
+.settings-danger-zone h2 {
+    margin: 0 0 14px;
+    font-size: 22px;
+}
+
+.btn-danger {
+    display: inline-block;
+    background: #d92d20;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 14px;
+    padding: 12px 18px;
+    font-weight: 600;
+}
