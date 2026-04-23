@@ -46,7 +46,6 @@
                         </a>
 
                         <a href="/liked" class="desktop-nav-link {% if request.path == '/liked' %}active{% endif %}">Понравившиеся</a>
-                        <a href="/privacy" class="desktop-nav-link {% if request.path == '/privacy' %}active{% endif %}">Приватность</a>
                         <a href="/settings" class="desktop-nav-link {% if request.path == '/settings' %}active{% endif %}">Настройки</a>
                         {% if is_admin %}
                             <a href="/admin" class="desktop-nav-link {% if request.path.startswith('/admin') %}active{% endif %}">
